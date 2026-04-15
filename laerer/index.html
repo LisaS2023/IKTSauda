@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lærerressurs – IKT på skolen</title>
+  <style>
+    :root {
+      --amber: #f97316;
+      --amber-soft: #fb923c;
+      --amber-dim: rgba(249,115,22,0.18);
+      --amber-glow: rgba(249,115,22,0.22);
+      --rust: #7c2d12;
+      --ink: #0f0a04;
+      --ink-soft: #1a0f05;
+      --surface: rgba(28, 14, 4, 0.82);
+      --surface-2: rgba(40, 20, 5, 0.92);
+      --card: rgba(255, 255, 255, 0.07);
+      --card-strong: rgba(255, 255, 255, 0.11);
+      --text: #fff5ed;
+      --soft-text: #e8cdb4;
+      --muted-text: #b89070;
+      --border: rgba(255,255,255,0.11);
+      --success: #78d6a2;
+      --warning: #f2c879;
+      --danger: #ff9a9a;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+      --radius: 26px;
+      --max-width: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(249,115,22,0.14), transparent 26%),
+        radial-gradient(circle at 90% 8%, rgba(180, 80, 20, 0.16), transparent 28%),
+        linear-gradient(180deg, #0f0804 0%, #150c04 38%, #1a1005 100%);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0));
+      opacity: 0.28;
+    }
+
+    /* Back button */
+    .back-btn {
+      position: fixed;
+      top: 22px;
+      left: 24px;
+      z-index: 200;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.5);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 9px 16px 9px 12px;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 4px;
+      background: rgba(15, 8, 4, 0.6);
+      backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    .back-btn:hover {
+      color: var(--amber);
+      border-color: rgba(249,115,22,0.45);
+      background: rgba(249,115,22,0.08);
+    }
+    .back-btn svg { transition: transform 0.25s ease; flex-shrink: 0; }
+    .back-btn:hover svg { transform: translateX(-3px); }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      min-height: 86vh;
+      padding: 2rem 1.5rem 5rem;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      background:
+        linear-gradient(90deg, rgba(10,5,2,0.94) 0%, rgba(10,5,2,0.72) 42%, rgba(10,5,2,0.28) 100%),
+        radial-gradient(circle at 18% 24%, rgba(249,115,22,0.24), transparent 24%),
+        radial-gradient(circle at 80% 20%, rgba(180,80,20,0.18), transparent 22%),
+        url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(18px);
+      opacity: 0.65;
+      pointer-events: none;
+    }
+    .hero::before {
+      width: 520px; height: 520px;
+      top: -180px; right: -60px;
+      background: rgba(249,115,22,0.18);
+    }
+    .hero::after {
+      width: 420px; height: 420px;
+      bottom: -180px; left: -90px;
+      background: rgba(180,80,20,0.16);
+    }
+
+    .hero-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      min-height: calc(86vh - 2rem);
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.2fr 0.85fr;
+      gap: 2rem;
+      align-items: end;
+    }
+
+    .hero-copy { padding-top: 3rem; max-width: 760px; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13);
+      padding: 0.5rem 0.95rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+    }
+    .eyebrow::before {
+      content: "";
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fed7aa, #f97316);
+      box-shadow: 0 0 18px rgba(249,115,22,0.5);
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 6rem);
+      line-height: 0.94;
+      margin: 0 0 1rem;
+      letter-spacing: -0.05em;
+      max-width: 8.5ch;
+      text-wrap: balance;
+      text-shadow: 0 8px 32px rgba(0,0,0,0.34);
+    }
+
+    .hero p {
+      font-size: 1.12rem;
+      max-width: 60ch;
+      margin: 0 0 1.6rem;
+      color: #f0d8c0;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      padding: 1rem 1.35rem;
+      border-radius: 999px;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .button:hover { transform: translateY(-2px); }
+    .button-primary {
+      background: linear-gradient(135deg, #fed7aa, #f97316);
+      color: #1a0800;
+      box-shadow: 0 16px 34px rgba(249,115,22,0.3);
+    }
+    .button-secondary {
+      background: rgba(255,255,255,0.06);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+    .hero-tag {
+      padding: 0.52rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      color: #f0d8c0;
+      border: 1px solid rgba(255,255,255,0.13);
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+    }
+
+    .hero-card {
+      position: relative;
+      align-self: center;
+      background: linear-gradient(180deg, rgba(20,10,3,0.82), rgba(30,15,4,0.76));
+      border: 1px solid rgba(255,255,255,0.11);
+      border-radius: 30px;
+      padding: 1.7rem;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(249,115,22,0.08), transparent 48%);
+      pointer-events: none;
+    }
+    .hero-card h2 {
+      font-size: 1rem;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      color: #fff5ed;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .hero-card p { color: var(--soft-text); margin: 0 0 1rem; }
+
+    .hero-card-bottom {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.9rem;
+      margin-top: 1rem;
+    }
+    .stat {
+      border-radius: 18px;
+      padding: 1rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .stat strong { display: block; font-size: 1.6rem; color: var(--amber); margin-bottom: 0.15rem; }
+    .stat span { color: var(--muted-text); font-size: 0.9rem; }
+
+    /* Main */
+    main {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 1.5rem 4.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: -4.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .intro-card,
+    .category,
+    .tip-box,
+    .checklist {
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .intro-card { padding: 1.5rem; min-height: 180px; }
+    .intro-card h3 { margin-top: 0; margin-bottom: 0.55rem; color: #fff5ed; font-size: 1.18rem; }
+    .intro-card p { color: var(--soft-text); }
+
+    .section-title {
+      margin: 3.6rem 0 1.4rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      align-items: end;
+    }
+    .section-title h2 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 3rem);
+      color: #fff5ed;
+      letter-spacing: -0.03em;
+    }
+    .section-title p { margin: 0.65rem 0 0; max-width: 62ch; color: var(--soft-text); }
+
+    .category-link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      height: 100%;
+      transition: transform 0.28s ease;
+    }
+    .category-link:hover { transform: translateY(-8px); }
+
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.4rem;
+    }
+
+    .category {
+      padding: 1.65rem;
+      position: relative;
+      overflow: hidden;
+      min-height: 260px;
+      transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    }
+    .category:hover {
+      border-color: rgba(249,115,22,0.28);
+      background: linear-gradient(180deg, rgba(249,115,22,0.07), rgba(255,255,255,0.03));
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.5);
+    }
+    .category::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent 40%);
+      pointer-events: none;
+    }
+    .category::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -30% auto;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,115,22,0.18), transparent 65%);
+      filter: blur(10px);
+      pointer-events: none;
+    }
+
+    .category-header {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .icon {
+      min-width: 60px;
+      height: 60px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(180,80,20,0.95), rgba(249,115,22,0.95), rgba(251,146,60,0.9));
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 800;
+      box-shadow: 0 16px 32px rgba(249,115,22,0.28);
+    }
+
+    .category h3 { margin: 0 0 0.45rem; color: #fff5ed; font-size: 1.5rem; letter-spacing: -0.02em; }
+    .category p { color: var(--soft-text); position: relative; z-index: 1; }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1rem;
+      margin-top: 1.1rem;
+      position: relative;
+      z-index: 1;
+      align-items: stretch;
+    }
+
+    .mini-box, .visual-box {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 1rem;
+      background: rgba(10, 5, 2, 0.42);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .mini-box h4, .visual-box h4 {
+      margin: 0 0 0.6rem;
+      font-size: 0.85rem;
+      color: #fed7aa;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .mini-box ul { margin: 0; padding-left: 1.05rem; color: var(--soft-text); }
+    .mini-box li { margin-bottom: 0.45rem; }
+
+    .visual-box {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top right, rgba(249,115,22,0.14), transparent 40%),
+        linear-gradient(180deg, rgba(10,5,2,0.5), rgba(10,5,2,0.34));
+    }
+    .visual-footer { margin-top: 0.8rem; color: var(--muted-text); font-size: 0.92rem; }
+
+    /* Tips section */
+    .tip-area {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.25rem;
+      margin-top: 3.4rem;
+    }
+    .tip-box, .checklist { padding: 1.5rem; }
+    .tip-box h3, .checklist h3 { margin-top: 0; color: #fff5ed; font-size: 1.24rem; }
+    .tip-box p, .checklist p { color: var(--soft-text); }
+
+    .callout {
+      border: 1px solid rgba(249,115,22,0.35);
+      padding: 1rem 1.05rem;
+      background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(255,255,255,0.03));
+      border-radius: 18px;
+      margin-top: 1rem;
+      color: var(--soft-text);
+    }
+
+    .status-list {
+      list-style: none;
+      padding: 0; margin: 0;
+      display: grid;
+      gap: 0.9rem;
+    }
+    .status-list li {
+      padding: 0.95rem 1rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(10,5,2,0.36);
+      color: var(--soft-text);
+    }
+    .status-ok strong { color: var(--success); }
+    .status-careful strong { color: var(--warning); }
+    .status-no strong { color: var(--danger); }
+
+    footer {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+      font-size: 0.95rem;
+      color: var(--soft-text);
+    }
+
+    @media (max-width: 980px) {
+      .hero { min-height: auto; padding-top: 4rem; }
+      .hero-inner, .intro-grid, .tip-area, .categories, .category-grid, .section-title {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+      .hero-inner { min-height: auto; align-items: start; }
+      .hero-copy { padding-top: 1rem; }
+      h1 { max-width: 10ch; }
+      .intro-grid { margin-top: -2rem; }
+    }
+
+    @media (max-width: 640px) {
+      .hero { padding: 3rem 1rem 3.5rem; }
+      main { padding: 0 1rem 3.5rem; }
+      .category { padding: 1.2rem; min-height: auto; }
+      .category-header { flex-direction: column; }
+      .icon { min-width: 50px; height: 50px; }
+      .button { width: 100%; text-align: center; }
+      .hero-card-bottom, .category-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="../index.html" class="back-btn">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+      <path d="M13 8H3M7 4l-4 4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Tilbake
+  </a>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow">Lærerressurs · pedagogisk IKT</span>
+        <h1>Lær mer. Undervise bedre. Bruk teknologi smart.</h1>
+        <p>
+          10 kurs for deg som vil utvikle din profesjonsfaglige digitale kompetanse.
+          Fra Teams og Canva til KI og spillpedagogikk – alt praktisk og direkte overførbart til undervisningen.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#kurs">Se alle kurs</a>
+          <a class="button button-secondary" href="#tips">Tips og ressurser</a>
+        </div>
+        <div class="hero-meta">
+          <span class="hero-tag">For lærere</span>
+          <span class="hero-tag">Videregående skole</span>
+          <span class="hero-tag">10 kurs</span>
+          <span class="hero-tag">Forankret i LK20</span>
+        </div>
+      </div>
+      <aside class="hero-card">
+        <h2>Slik bruker du ressursen</h2>
+        <p>
+          Velg kurset du vil ta. Hvert kurs gir deg praktisk kunnskap du kan ta direkte i bruk i undervisningen.
+        </p>
+        <div class="hero-card-bottom">
+          <div class="stat">
+            <strong>10</strong>
+            <span>kurs tilgjengelig</span>
+          </div>
+          <div class="stat">
+            <strong>5</strong>
+            <span>verktøy dekket</span>
+          </div>
+          <div class="stat">
+            <strong>PfDK</strong>
+            <span>profesjonsfaglig</span>
+          </div>
+          <div class="stat">
+            <strong>LK20</strong>
+            <span>forankret</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="intro-grid">
+      <div class="intro-card">
+        <h3>Profesjonsfaglig digital kompetanse</h3>
+        <p>PfDK handler om mer enn å beherske verktøy. Det dreier seg om å bruke teknologi pedagogisk – på en måte som fremmer aktiv læring, samarbeid og kritisk tenkning hos elevene.</p>
+      </div>
+      <div class="intro-card">
+        <h3>Forankret i forskning og LK20</h3>
+        <p>Alle kursene er bygget på nasjonale føringer og forskning om digitalisering i utdanning. Digital kompetanse er en grunnleggende ferdighet i alle fag.</p>
+      </div>
+    </div>
+
+    <section class="section-title" id="kurs">
+      <div>
+        <h2>10 kurs – velg der du vil starte</h2>
+        <p>Kursene er delt inn i fem tema: Teams, KI, Canva, Dugga og Spill.</p>
+      </div>
+    </section>
+
+    <section class="categories" aria-label="Kursoversikt">
+
+      <article class="category">
+        <a class="category-link" href="teams-grunnleggende.html">
+          <div class="category-header">
+            <div class="icon">01</div>
+            <div>
+              <h3>Kom i gang med Teams</h3>
+              <p>Del planer og organiser undervisningsinnhold med Skolearbeid (moduler).</p>
+            </div>
+          </div>
+          <div class="category-grid">
+            <div class="mini-box">
+              <h4>Du lærer å</h4>
+              <ul>
+                <li>dele arbeidsplaner</li>
+                <li>bruke moduler</li>
+                <li>sende tydelige beskjeder</li>
+              </ul>
+            </div>
+            <div class="visual-box">
+              <h4>Tema</h4>
+              <div class="visual-footer">Teams · Grunnleggende</div>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="category">
+        <a class="category-link" href="teams-vurdering.html">
+          <div class="category-header">
+            <div class="icon">02</div>
+            <div>
+              <h3>Teams for vurdering</h3>
+              <p>Gi digitale tilbakemeldinger, bruk rubrikker og følg elevenes progresjon.</p>
+            </div>
+          </div>
+          <div class="category-grid">
+            <div class="mini-box">
+              <h4>Du lærer å</h4>
+              <ul>
+                <li>gi tilbakemelding</li>
+                <li>bruke rubrikker</li>
+                <li>dokumentere vurdering</li>
+              </ul>
+            </div>
+            <div class="visual-box">
+              <h4>Tema</h4>
+              <div class="visual-footer">Teams · Vurdering</div>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="category">
+        <a class="category-link" href="ki-grunnleggende.html">
+          <div class="category-header">
+            <div class="icon">03</div>
+            <div>
+              <h3>KI – grunnleggende bruk</h3>
+              <p>Praktisk og trygg inngang til å bruke kunstig intelligens i undervisningen.</p>
+            </div>
+          </div>
+          <div class="category-grid">
+            <div class="mini-box">
+              <h4>Du lærer å</h4>
+              <ul>
+                <li>bruke KI i planlegging</li>
+                <li>vise ansvarlig KI-bruk</li>
+                <li>reflektere kritisk</li>
+              </ul>
+            </div>
+            <div class="visual-box">
+              <h4>Tema</h4>
+              <div class="visual-footer">KI · Grunnleggende</div>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="category">
+        <a class="category-link" href="trafikklys.html">
+          <div class="category-header">
+            <div class="icon">04</div>
+            <div>
+              <h3>Trafikklysmodellen</h3>
+              <p>Veilede elever i KI-bruk med grønn, gul og rød merking av oppgaver.</p>
+            </div>
+          </div>
+          <div class="category-grid">
+            <div class="mini-box">
+              <h4>Du lærer å</h4>
+              <ul>
+                <li>merke oppgaver i Teams</li>
+                <li>lage klare KI-regler</li>
+                <li>bygge digital dømmekraft</li>
+              </ul>
+            </div>
+            <div class="visual-box">
+              <h4>Tema</h4>
+              <div class="visual-footer">KI · Trafikklys</div>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="category">
+        <a class="category-link" href="canva-grunnleggende.html">
+          <div class="category-header">
+            <div class="icon">05</div>
+            <div>
+              <h3>Kom i gang med Canva</h3>
+              <p>Lag visuelt og engasjerende undervisningsmateriell uten designerfaring.</p>
+            </div>
+          </div>
+          <div class="category-grid">
+            <div class="mini-box">
+              <h4>Du lærer å</h4>
+              <ul>
+                <li>lage plakater og maler</li>
+                <li>bruke KI i Canva</li>
+                <li>tilpasse presentasjoner</li>
+              </ul>
+            </div>
+            <div class="visual-box">
+              <h4>Tema</h4>
+              <div class="visual-footer">Canva · Grunnleggende</div>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="category">
+        <a class="category-link" href="canva-elevdeltakelse.html">
+          <div class="category-header">
+            <div class="icon">06</div>
+            <div>
+              <h3>Canva for elevdeltakelse</h3>
+              <p>Sett opp Canva-klasserom og gjør elevene til aktive formidlere.</p>
+            </div>
+          </div>
+          <div class="category-grid">
+            <div class="mini-box">
+              <h4>Du lærer å</h4>
+              <ul>
+                <li>bruke Canva-klasserom</li>
+                <li>lage maler til elever</li>
+                <li>tverrfaglige oppgaver</li>
+              </ul>
+            </div>
+            <div class="visual-box">
+              <h4>Tema</h4>
+              <div class="visual-footer">Canva · Aktiv læring</div>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="category">
+        <a class="category-link" href="dugga-grunnleggende.html">
+          <div class="category-header">
+            <div class="icon">07</div>
+            <div>
+              <h3>Kom i gang med Dugga</h3>
+              <p>Lag enkle prøver, velg oppgavetyper og publiser trygt til elevene.</p>
+            </div>
+          </div>
+          <div class="category-grid">
+            <div class="mini-box">
+              <h4>Du lærer å</h4>
+              <ul>
+                <li>lage og publisere prøver</li>
+                <li>flervalg og åpne spørsmål</li>
+                <li>hente ut besvarelser</li>
+              </ul>
+            </div>
+            <div class="visual-box">
+              <h4>Tema</h4>
+              <div class="visual-footer">Dugga · Grunnleggende</div>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="category">
+        <a class="category-link" href="dugga-tilpasning.html">
+          <div class="category-header">
+            <div class="icon">08</div>
+            <div>
+              <h3>Dugga for tilpasning</h3>
+              <p>Tilpass prøver til ulike behov og bruk Dugga til dokumentasjon.</p>
+            </div>
+          </div>
+          <div class="category-grid">
+            <div class="mini-box">
+              <h4>Du lærer å</h4>
+              <ul>
+                <li>tilpasse for ulike behov</li>
+                <li>analysere resultater</li>
+                <li>vurderingsmappe</li>
+              </ul>
+            </div>
+            <div class="visual-box">
+              <h4>Tema</h4>
+              <div class="visual-footer">Dugga · Tilpasset</div>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="category">
+        <a class="category-link" href="spill-grunnleggende.html">
+          <div class="category-header">
+            <div class="icon">09</div>
+            <div>
+              <h3>Spill i undervisningen</h3>
+              <p>Bruk læringsspill som motivasjonsverktøy og koble dem til kompetansemål.</p>
+            </div>
+          </div>
+          <div class="category-grid">
+            <div class="mini-box">
+              <h4>Du lærer å</h4>
+              <ul>
+                <li>velge relevante spill</li>
+                <li>planlegge en spilløkt</li>
+                <li>lage refleksjonsoppgave</li>
+              </ul>
+            </div>
+            <div class="visual-box">
+              <h4>Tema</h4>
+              <div class="visual-footer">Spill · Grunnleggende</div>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="category">
+        <a class="category-link" href="spillpedagogikk.html">
+          <div class="category-header">
+            <div class="icon">10</div>
+            <div>
+              <h3>Spillpedagogikk i praksis</h3>
+              <p>Bruk spill som vurderingsform og grunnlag for tverrfaglige prosjekter.</p>
+            </div>
+          </div>
+          <div class="category-grid">
+            <div class="mini-box">
+              <h4>Du lærer å</h4>
+              <ul>
+                <li>designe vurderingsaktiviteter</li>
+                <li>analysere spill med elever</li>
+                <li>skriving og refleksjon</li>
+              </ul>
+            </div>
+            <div class="visual-box">
+              <h4>Tema</h4>
+              <div class="visual-footer">Spill · Fordypning</div>
+            </div>
+          </div>
+        </a>
+      </article>
+
+    </section>
+
+    <section class="tip-area" id="tips">
+      <div class="tip-box">
+        <h3>Pedagogisk bruk av IKT – huskeliste</h3>
+        <p>Teknologi gir merverdi når den er knyttet til et tydelig læringsmål – ikke som mål i seg selv.</p>
+        <div class="callout">
+          <strong>God praksis:</strong><br />
+          Velg verktøy med omhu → Koble til kompetansemål → La elevene reflektere over læringen → Del erfaringer med kollegene dine.
+        </div>
+      </div>
+
+      <aside class="checklist">
+        <h3>Trafikklysmodellen – rask oversikt</h3>
+        <ul class="status-list">
+          <li class="status-ok"><strong>Grønt:</strong> KI kan brukes fritt – til idémyldring, språkvask og forslag til struktur.</li>
+          <li class="status-careful"><strong>Gult:</strong> KI kan brukes som støtte, men eleven må forklare og begrunne selv.</li>
+          <li class="status-no"><strong>Rødt:</strong> KI ikke tillatt – eleven skal vise egne ferdigheter uten støtte.</li>
+        </ul>
+      </aside>
+    </section>
+
+  </main>
+
+  <footer>
+    Lærerressursen er en del av IKT-ressursen ved Sauda videregående skole. Utviklet av LisaS · Pedagogisk IKT-ansvarlig · 2024.
+  </footer>
+
+</body>
+</html>

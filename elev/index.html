@@ -583,9 +583,52 @@
       .button { width: 100%; text-align: center; }
       .hero-card-bottom, .category-grid { grid-template-columns: 1fr; }
     }
+  
+    /* Back button */
+    .back-btn {
+      position: fixed;
+      top: 22px;
+      left: 24px;
+      z-index: 200;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.5);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 9px 16px 9px 12px;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 4px;
+      background: rgba(5, 12, 22, 0.6);
+      backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    .back-btn:hover {
+      color: #8C7AA9;
+      border-color: rgba(140,122,169,0.45);
+      background: rgba(140,122,169,0.08);
+    }
+    .back-btn svg {
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+    .back-btn:hover svg {
+      transform: translateX(-3px);
+    }
+
   </style>
 </head>
 <body>
+    <a href="../index.html" class="back-btn">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+      <path d="M13 8H3M7 4l-4 4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Tilbake
+  </a>
+
   <header class="hero">
     <div class="hero-inner">
       <div class="hero-copy">

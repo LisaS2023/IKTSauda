@@ -54,8 +54,10 @@ body{font-family:var(--sans);background:#f0f0f0;overflow-x:hidden;}
 #banner-toggle{background:none;border:none;color:#ff4444;cursor:pointer;font-size:.75rem;padding:.1rem .3rem;flex-shrink:0;transition:transform .3s;}
 #banner-toggle.open{transform:rotate(180deg);}
 #ki-banner-body{overflow:hidden;max-height:0;transition:max-height .4s ease;}
-#ki-banner-body.open{max-height:100px;}
-#ki-banner-text{padding:.4rem 1rem .6rem;font-family:var(--sans);font-size:.75rem;color:#888;line-height:1.5;border-top:1px solid #1a1a1a;}
+#ki-banner-body.open{max-height:200px;}
+#ki-banner-text{padding:.4rem 1rem .5rem;font-family:var(--sans);font-size:.75rem;color:#888;line-height:1.5;border-top:1px solid #1a1a1a;}
+#banner-progress{padding:.3rem 1rem .6rem;}
+#solved-log-banner{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem;min-height:0;}
 
 /* ══ HERO ══ */
 #hero{background:var(--green);display:grid;grid-template-columns:1fr 1fr;min-height:300px;position:relative;overflow:hidden;}
@@ -116,11 +118,7 @@ body{font-family:var(--sans);background:#f0f0f0;overflow-x:hidden;}
 .lg-fixed span:last-child{color:var(--text)!important;animation:none!important;}
 
 /* ══ CODE SECTION ══ */
-#code-box{background:#0c0c0c;border:2px solid #ff1744;margin:1.5rem 2rem;border-radius:8px;padding:1.5rem;font-family:var(--mono);animation:glow 2.5s ease-in-out infinite;transition:border-color 2s,animation .1s;}
-@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(255,23,68,.2)}50%{box-shadow:0 0 20px 3px rgba(255,23,68,.15)}}
-.cb-label{font-size:.67rem;letter-spacing:.25em;color:#ff1744;text-transform:uppercase;margin-bottom:.4rem;transition:color 2s;}
-.cb-head{font-size:1.05rem;color:#ff4444;margin-bottom:.6rem;animation:blink 3s infinite;transition:color 2s;}
-.cb-body{font-family:var(--sans);font-size:.87rem;color:#777;line-height:1.65;margin-bottom:1.1rem;transition:color 2s;}
+
 
 /* Progress */
 .prog-row{font-size:.67rem;color:#444;letter-spacing:.18em;margin-bottom:.5rem;transition:color 1.5s;}
@@ -180,12 +178,18 @@ body{font-family:var(--sans);background:#f0f0f0;overflow-x:hidden;}
   #links-grid{grid-template-columns:1fr;}
   .lg-item:nth-child(odd){border-right:none;padding-right:0;}
   .lg-item:nth-child(even){padding-left:0;}
-  #code-box{margin:.75rem;padding:1.1rem;}
   #footer{flex-direction:column;gap:1rem;padding:1rem;}
   .ir{flex-direction:column;}
   .go{width:100%;text-align:center;}
   #ki-banner{font-size:.68rem;padding:.45rem .75rem;}
   #hero-stamp span{font-size:1rem;padding:.4rem 1rem;}
+}
+
+/* ══ MATRIX FOOTER ══ */
+.matrix-text{position:relative;display:inline-block;}
+@keyframes matflicker{
+  0%,100%{opacity:1}
+  92%{opacity:1}93%{opacity:.1}94%{opacity:1}96%{opacity:.3}97%{opacity:1}
 }
 </style>
 </head>
@@ -222,14 +226,30 @@ body{font-family:var(--sans);background:#f0f0f0;overflow-x:hidden;}
 <div id="ki-banner">
   <div id="ki-banner-main">
     <span class="bi">⚠</span>
-    <span id="banner-msg">KRITISK: KI HAR OVERTATT SAUDA VGS — LØSNINGSORD KREVES FOR GJENOPPRETTING</span>
+    <span id="banner-msg">⚠ ADVARSEL: SAUDA VGS ER KOMPROMITTERT — ALL TILGANG BLOKKERT — UMIDDELBAR HANDLING KREVES</span>
     <span id="banner-n">0/6</span>
     <button id="banner-toggle" onclick="toggleBanner()" title="Vis/skjul instruksjoner">▼</button>
   </div>
   <div id="ki-banner-body">
     <div id="ki-banner-text">
-      En ukontrollert KI låste ned alle systemer klokken 03.41 i natt. Dere – hospitantene fra 10. klasse – er skolens siste håp.<br>
-      Løs de fysiske oppgavene og skriv løsningsordene i <strong style="color:#ff4444">søkefeltet</strong>. Hvert riktig ord gjenoppretter ett system.
+      Klokken 03.41 i natt brøt en ukontrollert KI seg inn i alle skolens systemer. Karakterdatabasen er kryptert. Timeplaner er slettet. Sikkerhetsportene er låst.<br>
+      Dere er de eneste som kan stoppe det. Løs oppgavene og skriv løsningsordene i <strong style="color:#ff5555">søkefeltet</strong> — ett ord per system. Tiden går.
+    </div>
+    <div id="banner-progress">
+      <div id="solved-log-banner"></div>
+      <div class="prog-row" id="banner-prog-label">// GJENOPPRETTING: <span id="banner-pcnt">0</span> / 6 MODULER</div>
+      <div class="pbars" id="banner-pbars">
+        <div class="pb act" id="bpb0"></div>
+        <div class="pb" id="bpb1"></div>
+        <div class="pb" id="bpb2"></div>
+        <div class="pb" id="bpb3"></div>
+        <div class="pb" id="bpb4"></div>
+        <div class="pb" id="bpb5"></div>
+      </div>
+      <div class="psubs">
+        <span id="bps0">R1 ◀</span><span id="bps1">R2</span><span id="bps2">R3</span>
+        <span id="bps3">S1</span><span id="bps4">S2</span><span id="bps5">S3</span>
+      </div>
     </div>
   </div>
 </div>
@@ -275,64 +295,30 @@ body{font-family:var(--sans);background:#f0f0f0;overflow-x:hidden;}
   <a href="#" class="lg-item"><span class="lg-arrow">→</span><span>Finn tilsett</span></a>
 </div>
 
-<!-- CODE BOX -->
-<div id="code-box">
-  <div class="cb-label" id="cb-label">⚠ SYSTEMGJENOPPRETTING KREVES</div>
-  <div class="cb-head" id="cb-head">KI HAR OVERTATT SAUDA VGS</div>
 
-
-  <div id="solved-log"></div>
-  <div class="prog-row">// GJENOPPRETTING: <span id="pcnt">0</span> / 6 MODULER</div>
-  <div class="pbars">
-    <div class="pb act" id="pb0"></div>
-    <div class="pb" id="pb1"></div>
-    <div class="pb" id="pb2"></div>
-    <div class="pb" id="pb3"></div>
-    <div class="pb" id="pb4"></div>
-    <div class="pb" id="pb5"></div>
-  </div>
-  <div class="psubs">
-    <span id="ps0">R1 ◀</span><span id="ps1">R2</span><span id="ps2">R3</span>
-    <span id="ps3">S1</span><span id="ps4">S2</span><span id="ps5">S3</span>
-  </div>
-
-  <!-- Panel 0 -->
-  <div class="ep show" id="ep0">
-    <div class="ep-row"><span class="ep-badge r">Realfag 1</span><span class="ep-title">Modul A</span></div>
-  </div>
-  <!-- Panel 1 -->
-  <div class="ep" id="ep1">
-    <div class="ep-row"><span class="ep-badge r">Realfag 2</span><span class="ep-title">Modul B</span></div>
-  </div>
-  <!-- Panel 2 -->
-  <div class="ep" id="ep2">
-    <div class="ep-row"><span class="ep-badge r">Realfag 3</span><span class="ep-title">Modul C</span></div>
-  </div>
-  <!-- Divider -->
-  <div class="pdiv" id="pdiv"><hr/><span>✓ REALFAG FULLFØRT – FASE 2: SPRÅK / SAMFUNN</span><hr/></div>
-  <!-- Panel 3 -->
-  <div class="ep" id="ep3">
-    <div class="ep-row"><span class="ep-badge l">Språk/samfunn 1</span><span class="ep-title">Modul D</span></div>
-  </div>
-  <!-- Panel 4 -->
-  <div class="ep" id="ep4">
-    <div class="ep-row"><span class="ep-badge l">Språk/samfunn 2</span><span class="ep-title">Modul E</span></div>
-  </div>
-  <!-- Panel 5 -->
-  <div class="ep" id="ep5">
-    <div class="ep-row"><span class="ep-badge l">Språk/samfunn 3</span><span class="ep-title">Modul F</span></div>
-  </div>
-</div>
 
 <!-- FOOTER -->
 <div id="footer">
-  <div class="fc"><h3>Sentralbordet</h3><p>Telefon: 51 92 28 00<br>(Betjent kvardagar 8–15)</p></div>
-  <div class="fc"><h3 id="fc2">K0NT4KT 0SS [UTILGJENGELIG]</h3><p id="fp2">S4UD4 V1D4R3G44ND3 SKUL3<br>Postboks 34 · 4201 Sauda</p></div>
-  <div class="fc"><h3>Her finn du oss</h3><p>Griegs gate 40, 4200 Sauda</p></div>
+  <div class="fc">
+    <h3>Sentralbordet</h3>
+    <p class="matrix-text" data-text="Telefon: 51 92 28 00">Telefon: 51 92 28 00</p>
+    <p class="matrix-text" data-text="(Betjent kvardagar 8–15)">(Betjent kvardagar 8–15)</p>
+  </div>
+  <div class="fc">
+    <h3 id="fc2">K0NT4KT 0SS [UTILGJENGELIG]</h3>
+    <p id="fp2">
+      <span class="matrix-text" data-text="S4UD4 V1D4R3G44ND3 SKUL3">S4UD4 V1D4R3G44ND3 SKUL3</span><br>
+      <span class="matrix-text" data-text="Postboks 34 · 4201 Sauda">Postboks 34 · 4201 Sauda</span>
+    </p>
+  </div>
+  <div class="fc">
+    <h3>Her finn du oss</h3>
+    <p class="matrix-text" data-text="Griegs gate 40, 4200 Sauda">Griegs gate 40, 4200 Sauda</p>
+  </div>
 </div>
 <div id="fbar">
   <span>SAUDA VIDAREGÅANDE SKULE</span>
-  <span id="fstatus">⚠ KI-KONTROLL — GJENOPPRETTING NØDVENDIG</span>
+  <span id="fstatus">⚠ KI-KONTROLL AKTIV — SYSTEM KRITISK — GJENOPPRETTING PÅKREVD</span>
 </div>
 
 <script>
@@ -385,13 +371,7 @@ const FIXES = [
     document.getElementById("hero-stamp").style.display = "flex";
     document.getElementById("ki-banner").style.opacity = "0";
     setTimeout(() => document.getElementById("ki-banner").style.display = "none", 900);
-    document.getElementById("code-box").style.borderColor = "#00c853";
-    document.getElementById("code-box").style.animation = "none";
-    document.getElementById("code-box").style.boxShadow = "0 0 20px rgba(0,200,83,.2)";
-    document.getElementById("cb-label").style.color = "#00c853";
-    document.getElementById("cb-label").textContent = "✓ SYSTEM GJENOPPRETTET";
-    document.getElementById("cb-head").textContent = "ALLE MODULER AKTIVE";
-    document.getElementById("cb-head").style.color = "#00e676"; document.getElementById("cb-head").style.animation = "none";
+
     document.getElementById("fstatus").textContent = "✓ FULLT OPERATIV";
     document.getElementById("fstatus").style.color = "#00c853"; document.getElementById("fstatus").style.animation = "none";
     setTimeout(() => document.getElementById("hero").scrollIntoView({behavior:"smooth"}), 600);
@@ -443,12 +423,12 @@ function go(i) {
     document.getElementById("pb"+i).classList.remove("act");
     document.getElementById("pb"+i).classList.add(i < 3 ? "r" : "l");
     const n = solved.filter(Boolean).length;
-    document.getElementById("pcnt").textContent = n;
+    document.getElementById("banner-pcnt").textContent = n;
     document.getElementById("banner-n").textContent = n+"/6";
     document.getElementById("ps"+i).textContent = (i<3?"R":"S")+(i<3?i+1:i-2);
 
     // Add mini solved badge to log
-    const log = document.getElementById("solved-log");
+    const log = document.getElementById("solved-log-banner");
     const badge = document.createElement("span");
     badge.className = "solved-mini";
     badge.textContent = "✓ " + (i<3 ? "Realfag "+(i+1) : "Språk/samf. "+(i-2));
@@ -555,12 +535,12 @@ function go_from_hero(i) {
   document.getElementById("pb"+i).classList.remove("act");
   document.getElementById("pb"+i).classList.add(i < 3 ? "r" : "l");
   const n = solved.filter(Boolean).length;
-  document.getElementById("pcnt").textContent = n;
+  document.getElementById("banner-pcnt").textContent = n;
   document.getElementById("banner-n").textContent = n+"/6";
   document.getElementById("ps"+i).textContent = (i<3?"R":"S")+(i<3?i+1:i-2);
 
   // Solved log badge
-  const log = document.getElementById("solved-log");
+  const log = document.getElementById("solved-log-banner");
   if (log) {
     const badge = document.createElement("span");
     badge.className = "solved-mini";
@@ -577,7 +557,6 @@ function go_from_hero(i) {
     if (pd) pd.style.display = "flex";
   }, 1100);
 
-  // Show next panel (in code-box) if all solved so far
   if (i < 5) {
     setTimeout(() => {
       document.getElementById("pb"+(i+1)).classList.add("act");
@@ -608,6 +587,39 @@ setTimeout(()=>{
   document.getElementById("ki-banner-body").classList.add("open");
   document.getElementById("banner-toggle").classList.add("open");
 },200);
+
+// ── MATRIX FOOTER SCRAMBLE ──
+(function(){
+  const CHARS = "アイウエオカキクケコサシスセソタチツテトナニヌネノ01アイウエオ#$%@!01アイウ";
+  function scramble(el) {
+    const orig = el.getAttribute("data-text") || el.textContent;
+    let iter = 0;
+    const total = 12;
+    const iv = setInterval(() => {
+      el.textContent = orig.split("").map((c, i) => {
+        if (c === " " || c === "·" || c === "–") return c;
+        if (i < iter) return orig[i];
+        return CHARS[Math.floor(Math.random() * CHARS.length)];
+      }).join("");
+      iter += 0.6;
+      if (iter >= orig.length) {
+        el.textContent = orig;
+        clearInterval(iv);
+      }
+    }, 40);
+  }
+  function scheduleScramble() {
+    const els = document.querySelectorAll(".matrix-text");
+    els.forEach(el => {
+      const delay = Math.random() * 6000 + 1000;
+      setTimeout(function run() {
+        scramble(el);
+        setTimeout(run, Math.random() * 8000 + 3000);
+      }, delay);
+    });
+  }
+  window.addEventListener("load", scheduleScramble);
+})();
 </script>
 </body>
 </html>

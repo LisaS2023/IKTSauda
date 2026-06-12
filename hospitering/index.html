@@ -383,6 +383,23 @@ body::before{content:'';position:fixed;left:0;right:0;height:3px;top:38%;z-index
 
 
 <div id="pdiv" style="display:none;"></div>
+
+<div id="final-challenge" style="display:none;margin:1.5rem 2rem;background:#0c0c0c;border:2px solid #ff1744;border-radius:8px;padding:1.5rem;font-family:var(--mono);animation:glow 2s ease-in-out infinite;">
+  <div style="font-size:.68rem;letter-spacing:.25em;color:#ff1744;text-transform:uppercase;margin-bottom:.4rem;">⚠ SISTE SIKKERHETSPROTOKOLL</div>
+  <div style="font-size:1.05rem;color:#ff4444;margin-bottom:.75rem;animation:headblink 2s infinite;" id="fc-head">SYSTEMET KREVER ENDELIG BEKREFTELSE</div>
+  <div style="font-family:var(--sans);font-size:.88rem;color:#888;line-height:1.65;margin-bottom:1.1rem;">
+    Alle seks moduler er gjenopprettet – men KI-en har aktivert en siste lås.<br><br>
+    <strong style="color:#ff5555">Husk de seks løsningsordene dere har skrevet inn. Tell antall bokstaver i hvert ord og skriv sifrene etter hverandre som én kode.</strong><br><br>
+    Eksempel: hvis ordene hadde 4, 6, 3, 9, 5 og 7 bokstaver → kode: <span style="color:#ffd740;letter-spacing:.1em;">463957</span>
+  </div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+    <input id="final-inp" type="text" placeholder="SKRIV INN KODEN..." autocomplete="off" maxlength="10"
+      onkeydown="if(event.key==='Enter')checkFinal()"
+      style="flex:1;min-width:130px;background:rgba(0,0,0,.6);border:1px solid #2a2a2a;border-radius:3px;color:#00e676;font-family:var(--mono);font-size:1.1rem;padding:.6rem .8rem;outline:none;text-transform:uppercase;letter-spacing:.15em;transition:border-color .2s;"/>
+    <button onclick="checkFinal()" style="background:transparent;border:1px solid #ff4444;color:#ff4444;font-family:var(--mono);font-size:.8rem;letter-spacing:.15em;padding:.6rem 1.2rem;cursor:pointer;border-radius:3px;text-transform:uppercase;transition:all .2s;">BEKREFT</button>
+  </div>
+  <div id="final-fb" style="font-family:var(--mono);font-size:.78rem;padding:.5rem .7rem;border-radius:3px;margin-top:.5rem;display:none;"></div>
+</div>
 <!-- FOOTER -->
 <div id="footer">
   <div class="fc">
@@ -451,17 +468,17 @@ const FIXES = [
     document.getElementById("fc2").style.animation = "none";
     document.getElementById("fp2").innerHTML = "Sauda vidaregåande skule<br>Postboks 34 · 4201 Sauda";
   },
-  // Språk 3 – full victory
+  // Språk 3 – trigger final challenge + start 200s countdown
   () => {
-    document.getElementById("scanlines").style.opacity = "0";
-    document.getElementById("hero-stamp").style.display = "flex";
-    if (window._stopCountdown) window._stopCountdown();
-    document.getElementById("ki-banner").style.opacity = "0";
-    setTimeout(() => document.getElementById("ki-banner").style.display = "none", 900);
-
-    document.getElementById("fstatus").textContent = "✓ FULLT OPERATIV";
-    document.getElementById("fstatus").style.color = "#00c853"; document.getElementById("fstatus").style.animation = "none";
-    setTimeout(() => document.getElementById("hero").scrollIntoView({behavior:"smooth"}), 600);
+    setTimeout(() => {
+      const fc = document.getElementById("final-challenge");
+      if (fc) {
+        fc.style.display = "block";
+        fc.scrollIntoView({behavior:"smooth", block:"center"});
+        setTimeout(() => document.getElementById("final-inp").focus(), 500);
+      }
+      if (window._startFinalCountdown) window._startFinalCountdown();
+    }, 1000);
   }
 ];
 
@@ -673,6 +690,77 @@ function go_from_hero(i) {
 }
 
 document.getElementById("hero-input").focus();
+
+// Final challenge
+function fullVictory() {
+  if (window._stopCountdown) window._stopCountdown();
+  document.getElementById("final-challenge").style.display = "none";
+
+  const styleKill = document.createElement("style");
+  styleKill.textContent = `
+    body::before, body::after { display:none !important; animation:none !important; }
+    #nav::after { display:none !important; animation:none !important; }
+    #ki-banner { animation:none !important; }
+    #countdown-overlay { animation:none !important; }
+    #countdown-warn { display:none !important; }
+    #hero-error-bar { display:none !important; }
+    #tb-mobbing, #tb-kontakt { animation:none !important; }
+    #nv-skulen::before { animation:none !important; }
+    .corrupt { animation:none !important; color:inherit !important; }
+    .jitter { animation:none !important; color:white !important; }
+    .glitch-title::before, .glitch-title::after { display:none !important; }
+    #hero-glitch { opacity:0 !important; animation:none !important; }
+    #scanlines { opacity:0 !important; }
+    #noise { opacity:0 !important; }
+    #hero-right::before { display:none !important; animation:none !important; }
+    #nv-skulen { color:var(--text) !important; }
+    #nv-skulen::before { display:none !important; }
+  `;
+  document.head.appendChild(styleKill);
+
+  const nvSkulen = document.getElementById("nv-skulen");
+  if (nvSkulen) { nvSkulen.textContent = "Skulen vår"; nvSkulen.style.color = ""; nvSkulen.style.position = ""; }
+  const tbm = document.getElementById("tb-mobbing");
+  const tbk = document.getElementById("tb-kontakt");
+  if (tbm) { tbm.textContent = "Meld frå om mobbing"; tbm.style.color = "#aaa"; tbm.style.animation = "none"; }
+  if (tbk) { tbk.textContent = "Kontakt oss"; tbk.style.color = "#aaa"; tbk.style.animation = "none"; }
+  document.getElementById("nav").style.borderBottomColor = "#ddd";
+  const ex = document.getElementById("lg-eksamen");
+  if (ex) { ex.classList.add("lg-fixed"); ex.querySelector("span:last-child").textContent = "Eksamen og vurdering"; }
+  document.getElementById("ki-banner").style.opacity = "0";
+  setTimeout(() => document.getElementById("ki-banner").style.display = "none", 900);
+  document.getElementById("hero-stamp").style.display = "flex";
+  document.getElementById("fstatus").textContent = "✓ FULLT OPERATIV";
+  document.getElementById("fstatus").style.color = "#00c853";
+  document.getElementById("fstatus").style.animation = "none";
+  setTimeout(() => document.getElementById("hero").scrollIntoView({behavior:"smooth"}), 600);
+}
+
+function checkFinal() {
+  const inp = document.getElementById("final-inp");
+  const fb  = document.getElementById("final-fb");
+  const val = inp.value.trim();
+  const expected = CODES.map(c => c.length).join("");
+
+  if (val === expected) {
+    fb.style.display = "block";
+    fb.style.background = "rgba(0,230,118,.1)";
+    fb.style.border = "1px solid rgba(0,230,118,.4)";
+    fb.style.color = "#00e676";
+    fb.textContent = "✓ KODE GODKJENT – SYSTEM FULLSTENDIG FRIGJORT";
+    inp.disabled = true;
+    setTimeout(fullVictory, 1200);
+  } else {
+    fb.style.display = "block";
+    fb.style.background = "rgba(255,23,68,.1)";
+    fb.style.border = "1px solid rgba(255,23,68,.4)";
+    fb.style.color = "#ff5252";
+    fb.textContent = "✗ Feil kode – tell bokstavene på nytt og prøv igjen";
+    inp.select();
+    const fc = document.getElementById("final-challenge");
+    if (fc) { fc.style.borderColor = "#ff0000"; setTimeout(() => fc.style.borderColor = "#ff1744", 600); }
+  }
+}
 // RGB glitch data-text
 const gt=document.getElementById("gtitle");
 if(gt) gt.setAttribute("data-text", gt.textContent);
@@ -689,7 +777,7 @@ setTimeout(()=>{
 
 // ── COUNTDOWN TIMER ── real 10000s countdown with ms
 (function(){
-  const TOTAL_MS = 10000 * 1000; // 10 000 seconds in ms
+  const TOTAL_MS = 200 * 1000; // 200 seconds for final challenge
   let endTime = null;
   let stopped = false;
   let rafId = null;
@@ -708,7 +796,7 @@ setTimeout(()=>{
     const wrap = document.getElementById("countdown-overlay");
     const bar  = document.getElementById("countdown-bar-fill");
     if (el) el.textContent = fmt(remaining);
-    if (bar) bar.style.width = Math.max(0, (remaining / (10000*1000))*100).toFixed(2)+"%";
+    if (bar) bar.style.width = Math.max(0, (remaining / (200*1000))*100).toFixed(2)+"%";
 
     if (remaining <= 0) {
       if (el) el.textContent = "00000.000";
@@ -763,9 +851,22 @@ setTimeout(()=>{
   window._pauseCountdown  = function() {};
   window._resumeCountdown = function() {};
 
-  window.addEventListener("load", () => {
+  window._startFinalCountdown = function() {
     endTime = Date.now() + TOTAL_MS;
+    stopped = false;
     rafId = requestAnimationFrame(tick);
+    const wrap  = document.getElementById("countdown-overlay");
+    const label = document.getElementById("countdown-label");
+    const sub   = document.getElementById("countdown-sub");
+    if (wrap)  { wrap.style.display = "block"; }
+    if (label) label.textContent = "SISTE SJANSE – DATA SLETTES OM";
+    if (sub)   sub.textContent   = "HUSK KODEORDENE OG TELL BOKSTAVENE!";
+  };
+
+  window.addEventListener("load", () => {
+    // Hide countdown until final challenge
+    const wrap = document.getElementById("countdown-overlay");
+    if (wrap) wrap.style.display = "none";
   });
 })();
 

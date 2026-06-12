@@ -304,9 +304,9 @@ body::before{content:'';position:fixed;left:0;right:0;height:3px;top:38%;z-index
     <span class="bi">⚠</span>
     <span id="banner-msg">⚠ ADVARSEL: SAUDA VGS ER KOMPROMITTERT — ALL TILGANG BLOKKERT — UMIDDELBAR HANDLING KREVES</span>
     <span id="banner-n">0/6</span>
-    <button id="banner-toggle" onclick="toggleBanner()" title="Vis/skjul instruksjoner">▼</button>
+    <button id="banner-toggle" type="button" class="open" onclick="toggleBanner()" title="Vis/skjul instruksjoner">▼</button>
   </div>
-  <div id="ki-banner-body">
+  <div id="ki-banner-body" class="open">
     <div id="ki-banner-text">
       Klokken 03.41 i natt brøt en ukontrollert KI seg inn i alle skolens systemer. Karakterdatabasen er kryptert. Timeplaner er slettet. Sikkerhetsportene er låst.<br>
       Dere er de eneste som kan stoppe det. Løs oppgavene og skriv løsningsordene i <strong style="color:#ff5555">søkefeltet</strong> — ett ord per system. Tiden går.
@@ -338,10 +338,10 @@ body::before{content:'';position:fixed;left:0;right:0;height:3px;top:38%;z-index
     </h1>
     <div id="hero-search">
       <input id="hero-input" type="text" placeholder="↑ Skriv løsningsord her og trykk Enter" autocomplete="off"
-        onkeydown="if(event.key==='Enter')heroSubmit()"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();heroSubmit();}"
         oninput="heroTyping(this.value)"
         style="border:none;outline:none;background:transparent;font-size:.9rem;color:#1a1a1a;flex:1;font-family:var(--sans);width:100%;"/>
-      <div class="search-btn" id="hero-search-btn" onclick="heroSubmit()" style="cursor:pointer;">🔍</div>
+      <div class="search-btn" id="hero-search-btn" type="button" onclick="heroSubmit()" style="cursor:pointer;">🔍</div>
     </div>
     <div id="hero-feedback" style="display:none;font-family:var(--mono);font-size:.72rem;margin-top:.3rem;padding:.3rem .75rem;border-radius:3px;max-width:340px;"></div>
     <div id="hero-pills">
@@ -355,7 +355,7 @@ body::before{content:'';position:fixed;left:0;right:0;height:3px;top:38%;z-index
     </div>
   </div>
   <div id="hero-right">
-    <div id="countdown-overlay">
+    <div id="countdown-overlay" style="display:none;visibility:hidden;opacity:0;">
       <div id="countdown-warn" style="font-family:var(--mono);font-size:.55rem;letter-spacing:.3em;color:#ff1744;margin-bottom:.2rem;animation:blink .4s steps(1) infinite;">⚠ KRITISK SYSTEMFEIL ⚠</div>
       <div id="countdown-label">DATA SLETTES OM</div>
       <div id="countdown-time">10000.000</div>
@@ -384,21 +384,30 @@ body::before{content:'';position:fixed;left:0;right:0;height:3px;top:38%;z-index
 
 <div id="pdiv" style="display:none;"></div>
 
-<div id="final-challenge" style="display:none;margin:1.5rem 2rem;background:#0c0c0c;border:2px solid #ff1744;border-radius:8px;padding:1.5rem;font-family:var(--mono);animation:glow 2s ease-in-out infinite;">
-  <div style="font-size:.68rem;letter-spacing:.25em;color:#ff1744;text-transform:uppercase;margin-bottom:.4rem;">⚠ SISTE SIKKERHETSPROTOKOLL</div>
-  <div style="font-size:1.05rem;color:#ff4444;margin-bottom:.75rem;animation:headblink 2s infinite;" id="fc-head">SYSTEMET KREVER ENDELIG BEKREFTELSE</div>
-  <div style="font-family:var(--sans);font-size:.88rem;color:#888;line-height:1.65;margin-bottom:1.1rem;">
-    Alle seks moduler er gjenopprettet – men KI-en har aktivert en siste lås.<br><br>
-    <strong style="color:#ff5555">Husk de seks løsningsordene dere har skrevet inn. Tell antall bokstaver i hvert ord og skriv sifrene etter hverandre som én kode.</strong><br><br>
-    Eksempel: hvis ordene hadde 4, 6, 3, 9, 5 og 7 bokstaver → kode: <span style="color:#ffd740;letter-spacing:.1em;">463957</span>
+<!-- FINAL CHALLENGE MODAL -->
+<div id="final-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:1rem;">
+  <div id="final-challenge" style="background:#0c0c0c;border:2px solid #ff1744;border-radius:8px;padding:1.75rem;font-family:var(--mono);width:100%;max-width:600px;animation:fadein .4s ease,glow 2s ease-in-out infinite;position:relative;">
+    <div style="font-size:.65rem;letter-spacing:.25em;color:#ff1744;text-transform:uppercase;margin-bottom:.4rem;">⚠ SISTE SIKKERHETSPROTOKOLL</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:.75rem;">
+      <div style="font-size:1.05rem;color:#ff4444;animation:headblink 2s infinite;">SYSTEMET KREVER ENDELIG BEKREFTELSE</div>
+      <div id="modal-countdown" style="text-align:center;background:rgba(255,23,68,.1);border:1px solid rgba(255,23,68,.5);border-radius:4px;padding:.4rem .8rem;min-width:160px;">
+        <div style="font-family:var(--mono);font-size:.55rem;letter-spacing:.2em;color:#ff4444;animation:blink .4s steps(1) infinite;">DATA SLETTES OM</div>
+        <div id="modal-time" style="font-family:var(--mono);font-size:1.4rem;font-weight:bold;color:#ff1744;letter-spacing:.06em;text-shadow:0 0 12px rgba(255,23,68,.6);animation:cdpulse 1s steps(1) infinite;">200.000</div>
+      </div>
+    </div>
+    <div style="font-family:var(--sans);font-size:.88rem;color:#888;line-height:1.65;margin-bottom:1.1rem;">
+      Alle seks moduler er gjenopprettet – men KI-en har aktivert en siste lås.<br><br>
+      <strong style="color:#ff5555">Husk de seks løsningsordene dere har skrevet inn. Tell antall bokstaver i hvert ord og skriv sifrene etter hverandre som én kode.</strong><br><br>
+      Eksempel: hvis ordene hadde 4, 6, 3, 9, 5 og 7 bokstaver → kode: <span style="color:#ffd740;letter-spacing:.1em;">463957</span>
+    </div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+      <input id="final-inp" type="text" placeholder="SKRIV INN KODEN..." autocomplete="off" maxlength="10"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();checkFinal();}"
+        style="flex:1;min-width:130px;background:rgba(0,0,0,.6);border:1px solid #2a2a2a;border-radius:3px;color:#00e676;font-family:var(--mono);font-size:1.1rem;padding:.6rem .8rem;outline:none;text-transform:uppercase;letter-spacing:.15em;transition:border-color .2s;"/>
+      <button onclick="checkFinal()" style="background:transparent;border:1px solid #ff4444;color:#ff4444;font-family:var(--mono);font-size:.8rem;letter-spacing:.15em;padding:.6rem 1.2rem;cursor:pointer;border-radius:3px;text-transform:uppercase;">BEKREFT</button>
+    </div>
+    <div id="final-fb" style="font-family:var(--mono);font-size:.78rem;padding:.5rem .7rem;border-radius:3px;margin-top:.5rem;display:none;"></div>
   </div>
-  <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
-    <input id="final-inp" type="text" placeholder="SKRIV INN KODEN..." autocomplete="off" maxlength="10"
-      onkeydown="if(event.key==='Enter')checkFinal()"
-      style="flex:1;min-width:130px;background:rgba(0,0,0,.6);border:1px solid #2a2a2a;border-radius:3px;color:#00e676;font-family:var(--mono);font-size:1.1rem;padding:.6rem .8rem;outline:none;text-transform:uppercase;letter-spacing:.15em;transition:border-color .2s;"/>
-    <button onclick="checkFinal()" style="background:transparent;border:1px solid #ff4444;color:#ff4444;font-family:var(--mono);font-size:.8rem;letter-spacing:.15em;padding:.6rem 1.2rem;cursor:pointer;border-radius:3px;text-transform:uppercase;transition:all .2s;">BEKREFT</button>
-  </div>
-  <div id="final-fb" style="font-family:var(--mono);font-size:.78rem;padding:.5rem .7rem;border-radius:3px;margin-top:.5rem;display:none;"></div>
 </div>
 <!-- FOOTER -->
 <div id="footer">
@@ -471,11 +480,10 @@ const FIXES = [
   // Språk 3 – trigger final challenge + start 200s countdown
   () => {
     setTimeout(() => {
-      const fc = document.getElementById("final-challenge");
-      if (fc) {
-        fc.style.display = "block";
-        fc.scrollIntoView({behavior:"smooth", block:"center"});
-        setTimeout(() => document.getElementById("final-inp").focus(), 500);
+      const modal = document.getElementById("final-modal");
+      if (modal) {
+        modal.style.display = "flex";
+        setTimeout(() => document.getElementById("final-inp").focus(), 300);
       }
       if (window._startFinalCountdown) window._startFinalCountdown();
     }, 1000);
@@ -566,32 +574,37 @@ function go(i) {
 }
 // ── HERO SEARCH INPUT ──
 function heroSubmit() {
-  const inp = document.getElementById("hero-input");
-  const fb  = document.getElementById("hero-feedback");
-  if (!inp) return;
-  const val = inp.value.trim().toUpperCase();
-  if (!val) return;
+  try {
+    const inp = document.getElementById("hero-input");
+    const fb  = document.getElementById("hero-feedback");
+    if (!inp) { console.error("hero-input not found"); return; }
+    const val = inp.value.trim().toUpperCase();
+    if (!val) return;
 
-  // Find the current unsolved index
-  const idx = solved.indexOf(false);
-  if (idx === -1) return; // all done
+    const idx = solved.indexOf(false);
+    if (idx === -1) return;
 
-  if (val === CODES[idx]) {
-    // correct – trigger the same go() logic
-    inp.value = "";
-    fb.style.display = "none";
-    go_from_hero(idx);
-  } else {
-    fb.style.display = "block";
-    fb.style.background = "rgba(255,23,68,.12)";
-    fb.style.border = "1px solid rgba(255,23,68,.4)";
-    fb.style.color = "#ff5252";
-    fb.textContent = "✗ Ukjent kommando — prøv igjen";
-    inp.select();
-    // shake the search bar
-    const s = document.getElementById("hero-search");
-    s.style.animation = "shake .4s ease";
-    setTimeout(() => s.style.animation = "", 400);
+    if (val === CODES[idx]) {
+      inp.value = "";
+      if (fb) fb.style.display = "none";
+      go_from_hero(idx);
+    } else {
+      if (fb) {
+        fb.style.display = "block";
+        fb.style.background = "rgba(255,23,68,.12)";
+        fb.style.border = "1px solid rgba(255,23,68,.4)";
+        fb.style.color = "#ff5252";
+        fb.textContent = "✗ Ukjent kommando — prøv igjen";
+      }
+      inp.select();
+      const s = document.getElementById("hero-search");
+      if (s) {
+        s.style.animation = "shake .4s ease";
+        setTimeout(() => { s.style.animation = ""; }, 400);
+      }
+    }
+  } catch(e) {
+    console.error("heroSubmit error:", e);
   }
 }
 
@@ -694,7 +707,7 @@ document.getElementById("hero-input").focus();
 // Final challenge
 function fullVictory() {
   if (window._stopCountdown) window._stopCountdown();
-  document.getElementById("final-challenge").style.display = "none";
+  const fm = document.getElementById("final-modal"); if(fm) fm.style.display = "none";
 
   const styleKill = document.createElement("style");
   styleKill.textContent = `
@@ -758,7 +771,7 @@ function checkFinal() {
     fb.textContent = "✗ Feil kode – tell bokstavene på nytt og prøv igjen";
     inp.select();
     const fc = document.getElementById("final-challenge");
-    if (fc) { fc.style.borderColor = "#ff0000"; setTimeout(() => fc.style.borderColor = "#ff1744", 600); }
+    if (fc) { fc.style.borderColor = "#ff0000"; setTimeout(() => { if(fc) fc.style.borderColor = "#ff1744"; }, 600); }
   }
 }
 // RGB glitch data-text
@@ -795,8 +808,16 @@ setTimeout(()=>{
     const el   = document.getElementById("countdown-time");
     const wrap = document.getElementById("countdown-overlay");
     const bar  = document.getElementById("countdown-bar-fill");
-    if (el) el.textContent = fmt(remaining);
+    const mel  = document.getElementById("modal-time");
+    if (el)  el.textContent  = fmt(remaining);
+    if (mel) mel.textContent = fmt(remaining);
     if (bar) bar.style.width = Math.max(0, (remaining / (200*1000))*100).toFixed(2)+"%";
+
+    // Turn modal clock red/urgent under 30s
+    if (remaining <= 30000 && mel) {
+      mel.style.animation = "cdurgent .3s steps(1) infinite";
+      mel.style.fontSize  = "1.6rem";
+    }
 
     if (remaining <= 0) {
       if (el) el.textContent = "00000.000";
@@ -812,25 +833,76 @@ setTimeout(()=>{
 
   function dataLost() {
     stopped = true;
-    const wrap  = document.getElementById("countdown-overlay");
-    const label = document.getElementById("countdown-label");
-    const time  = document.getElementById("countdown-time");
-    const sub   = document.getElementById("countdown-sub");
-    if (wrap) wrap.classList.add("urgent");
+
+    // Update modal clock
+    const mel = document.getElementById("modal-time");
+    if (mel) { mel.textContent = "00.000"; mel.style.color = "#ff0000"; }
+
+    // Flash screen red a few times, then shatter
     let flashes = 0;
     const iv = setInterval(() => {
-      document.body.style.background = flashes % 2 === 0 ? "#2a0000" : "#0a0a0a";
+      document.body.style.background = flashes % 2 === 0 ? "#3a0000" : "#0a0a0a";
       flashes++;
-      if (flashes > 7) {
+      if (flashes > 5) {
         clearInterval(iv);
         document.body.style.background = "#0a0a0a";
-        if (label) label.textContent = "⛔ DATA TAPT";
-        if (time)  { time.textContent = "SLETTET"; time.style.fontSize = "1.4rem"; }
-        if (sub)   sub.textContent = "GJENOPPRETTING MISLYKTES";
-        const bm = document.getElementById("banner-msg");
-        if (bm) bm.textContent = "⛔ TIDSFRISTEN GIKK UT — ALL DATA ER SLETTET — MISLYKTES";
+        shatterPage();
       }
-    }, 180);
+    }, 120);
+  }
+
+  function shatterPage() {
+    const modal = document.getElementById("final-modal");
+    if (modal) modal.style.display = "none";
+
+    const overlay = document.createElement("div");
+    overlay.id = "shatter-overlay";
+    overlay.style.cssText = "position:fixed;inset:0;z-index:99999;overflow:hidden;background:#000;pointer-events:all;";
+    document.body.appendChild(overlay);
+
+    const msg = document.createElement("div");
+    msg.style.cssText = "position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1;";
+    msg.innerHTML =
+      '<div style="font-family:monospace;font-size:clamp(1.2rem,4vw,2.5rem);color:#ff1744;letter-spacing:.1em;animation:headblink 1s infinite;margin-bottom:1rem;">&#9940; SYSTEM SLETTET</div>' +
+      '<div style="font-family:monospace;font-size:clamp(.7rem,2vw,1rem);color:#880000;letter-spacing:.2em;margin-bottom:.5rem;">ALL DATA TAPT — GJENOPPRETTING MISLYKTES</div>' +
+      '<div style="font-family:monospace;font-size:.7rem;color:#440000;cursor:pointer;border:1px solid #440000;padding:.5rem 1.2rem;border-radius:3px;margin-top:2rem;" onclick="location.reload()">&#8635; PRØV IGJEN</div>';
+    overlay.appendChild(msg);
+
+    const shardContainer = document.createElement("div");
+    shardContainer.style.cssText = "position:absolute;inset:0;z-index:2;";
+    overlay.appendChild(shardContainer);
+
+    const W = window.innerWidth, H = window.innerHeight;
+    const COLS = 8, ROWS = 6;
+    const cellW = W / COLS, cellH = H / ROWS;
+    const colors = ["#0a1a0a","#0d1a0d","#111","#0a0c10","#0c0c0c","#1a1a1a","#0d2a0d","#1a0000"];
+
+    for (let row = 0; row < ROWS; row++) {
+      for (let col = 0; col < COLS; col++) {
+        for (let tri = 0; tri < 2; tri++) {
+          const x = col * cellW, y = row * cellH;
+          const angle = Math.random() * Math.PI * 2;
+          const dist = 200 + Math.random() * 600;
+          const tx = Math.cos(angle) * dist;
+          const ty = Math.sin(angle) * dist;
+          const rot = (Math.random() - .5) * 720;
+          const delay = Math.random() * 0.3;
+          const dur = 0.6 + Math.random() * 0.6;
+          const col_c = colors[Math.floor(Math.random() * colors.length)];
+          const clip = tri === 0 ? "polygon(0% 0%, 100% 0%, 0% 100%)" : "polygon(100% 0%, 100% 100%, 0% 100%)";
+          const animName = "shard_" + row + "_" + col + "_" + tri;
+
+          const kf = document.createElement("style");
+          kf.textContent = "@keyframes " + animName + "{0%{transform:translate(0,0) rotate(0deg);opacity:1;}20%{opacity:1;}100%{transform:translate(" + tx + "px," + ty + "px) rotate(" + rot + "deg);opacity:0;}}";
+          document.head.appendChild(kf);
+
+          const shard = document.createElement("div");
+          shard.style.cssText = "position:absolute;left:" + x + "px;top:" + y + "px;width:" + (cellW+1) + "px;height:" + (cellH+1) + "px;background:" + col_c + ";clip-path:" + clip + ";border:1px solid rgba(255,0,30,.15);transform-origin:center center;animation:" + animName + " " + dur + "s " + delay + "s ease-in forwards;";
+          shardContainer.appendChild(shard);
+        }
+      }
+    }
+    setTimeout(function() { shardContainer.style.display = "none"; }, 1500);
   }
 
   window._stopCountdown = function() {
@@ -844,6 +916,8 @@ setTimeout(()=>{
     if (wrap)  { wrap.classList.remove("urgent"); wrap.classList.add("done"); }
     if (label) label.textContent = "✓ DATA SIKRET";
     if (time)  time.textContent = fmt(remaining > 0 ? remaining : 0);
+    const mel = document.getElementById("modal-time");
+    if (mel) { mel.textContent = fmt(remaining > 0 ? remaining : 0); mel.style.color = "#00e676"; mel.style.animation = "none"; mel.style.textShadow = "0 0 12px rgba(0,230,118,.6)"; }
     if (sub)   sub.textContent = "ALLE SYSTEMER GJENOPPRETTET";
   };
 
@@ -855,18 +929,13 @@ setTimeout(()=>{
     endTime = Date.now() + TOTAL_MS;
     stopped = false;
     rafId = requestAnimationFrame(tick);
-    const wrap  = document.getElementById("countdown-overlay");
-    const label = document.getElementById("countdown-label");
-    const sub   = document.getElementById("countdown-sub");
-    if (wrap)  { wrap.style.display = "block"; }
-    if (label) label.textContent = "SISTE SJANSE – DATA SLETTES OM";
-    if (sub)   sub.textContent   = "HUSK KODEORDENE OG TELL BOKSTAVENE!";
+    // Keep hero overlay hidden - modal has its own clock
   };
 
   window.addEventListener("load", () => {
     // Hide countdown until final challenge
     const wrap = document.getElementById("countdown-overlay");
-    if (wrap) wrap.style.display = "none";
+    if (wrap) { wrap.style.visibility = 'hidden'; wrap.style.opacity = '0'; wrap.style.display = 'none'; }
   });
 })();
 

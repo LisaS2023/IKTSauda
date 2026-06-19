@@ -437,16 +437,16 @@ body::before{content:'';position:fixed;left:0;right:0;height:3px;top:38%;z-index
 // ══════════════════════════════════
 // BYTT UT MED FAKTISKE LØSNINGSORD
 // ══════════════════════════════════
-const CODES = ["SYNTESE","MOLEKYL","BRØK","SYMBOL","VALG","STORY"];
+const CODES = ["SYNTESE","MOLEKYL","SYMBOL","VALG","STORY","STUDERE"];
 
 // What gets visually fixed on each correct answer
 const FIXES = [
-  // Realfag 1 – fix "Søk om plass" pill + jitter v
+  // Kode 1 (Realfag 1) – fix "Søk om plass" pill + jitter v
   () => {
     heal("p-venteliste","pill",  "Søk om plass på ventelista");
     heal("j1","jitter fixed");
   },
-  // Realfag 2 – fix "Kurs" pill + jitter e + eksamen link
+  // Kode 2 (Realfag 2) – fix "Kurs" pill + jitter e + eksamen link
   () => {
     heal("p-kurs","pill pfixed", "Kurs og sertifisering");
     heal("j2","jitter fixed");
@@ -454,7 +454,7 @@ const FIXES = [
     ex.classList.add("lg-fixed");
     ex.querySelector("span:last-child").textContent = "Eksamen og vurdering";
   },
-  // Realfag 3 – fix nav "Skulen vår" + nav border + shield border
+  // Kode 3 (Språk/samfunn 1) – fix nav "Skulen vår" + nav border + shield border
   () => {
     const nv = document.getElementById("nv-skulen");
     nv.textContent = "Skulen vår";
@@ -462,13 +462,13 @@ const FIXES = [
     document.getElementById("nav").style.borderBottomColor = "#ddd";
     document.getElementById("nav-shield").style.borderColor = var_green();
   },
-  // Språk 1 – fix topbar mobbing link
+  // Kode 4 (Språk/samfunn 2) – fix topbar mobbing link
   () => {
     const m = document.getElementById("tb-mobbing");
     m.textContent = "Meld frå om mobbing";
     m.style.color = "#aaa"; m.style.animation = "none";
   },
-  // Språk 2 – fix topbar kontakt + footer
+  // Kode 5 (Språk/samfunn 3) – fix topbar kontakt + footer
   () => {
     const k = document.getElementById("tb-kontakt");
     k.textContent = "Kontakt oss";
@@ -477,7 +477,7 @@ const FIXES = [
     document.getElementById("fc2").style.animation = "none";
     document.getElementById("fp2").innerHTML = "Sauda vidaregåande skule<br>Postboks 34 · 4201 Sauda";
   },
-  // Språk 3 – trigger final challenge + start 200s countdown
+  // Kode 6 (VGS-ord, delt ut i filmsalen) – trigger final challenge + start 200s countdown
   () => {
     setTimeout(() => {
       const modal = document.getElementById("final-modal");
@@ -533,24 +533,24 @@ function go(i) {
 
     // Progress bars
     document.getElementById("pb"+i).classList.remove("act");
-    document.getElementById("pb"+i).classList.add(i < 3 ? "r" : "l");
+    document.getElementById("pb"+i).classList.add(i < 2 ? "r" : "l");
     const n = solved.filter(Boolean).length;
     document.getElementById("banner-pcnt").textContent = n;
     document.getElementById("banner-n").textContent = n+"/6";
-    document.getElementById("ps"+i).textContent = (i<3?"R":"S")+(i<3?i+1:i-2);
+    document.getElementById("ps"+i).textContent = (i<2?"R":"S")+(i<2?i+1:i-1);
 
     // Add mini solved badge to log
     const log = document.getElementById("solved-log-banner");
     const badge = document.createElement("span");
     badge.className = "solved-mini";
-    badge.textContent = "✓ " + (i<3 ? "Realfag "+(i+1) : "Språk/samf. "+(i-2));
+    badge.textContent = "✓ " + (i<2 ? "Realfag "+(i+1) : (i<5 ? "Språk/samf. "+(i-1) : "VGS-kode"));
     log.appendChild(badge);
 
     // Run visual fix
     FIXES[i]();
 
     // Show phase divider before panel 3
-    if (i === 2) setTimeout(() => { document.getElementById("pdiv").style.display = "flex"; }, 1100);
+    if (i === 1) setTimeout(() => { document.getElementById("pdiv").style.display = "flex"; }, 1100);
 
     // Show next panel
     if (i < 5) {
@@ -625,7 +625,7 @@ function go_from_hero(i) {
   fb.style.background = "rgba(0,200,83,.12)";
   fb.style.border = "1px solid rgba(0,200,83,.4)";
   fb.style.color = "#00c853";
-  fb.textContent = "✓ System " + (i<3?"realfag":"språk/samfunn") + " " + (i<3?i+1:i-2) + " gjenopprettet";
+  fb.textContent = "✓ System " + (i<2?"realfag":(i<5?"språk/samfunn":"VGS")) + " " + (i<2?i+1:(i<5?i-1:"")) + " gjenopprettet";
   setTimeout(() => { s.style.boxShadow = ""; }, 1200);
   setTimeout(() => { fb.style.display = "none"; }, 2200);
 
@@ -650,34 +650,20 @@ function go_from_hero(i) {
 
   // Progress bars
   const pb = document.getElementById("bpb"+i);
-  if (pb) { pb.classList.remove("act"); pb.classList.add(i < 3 ? "r" : "l"); }
+  if (pb) { pb.classList.remove("act"); pb.classList.add(i < 2 ? "r" : "l"); }
   const n = solved.filter(Boolean).length;
   document.getElementById("banner-pcnt").textContent = n;
   document.getElementById("banner-n").textContent = n+"/6";
   const ps = document.getElementById("bps"+i);
-  if (ps) ps.textContent = (i<3?"R":"S")+(i<3?i+1:i-2);
+  if (ps) ps.textContent = (i<2?"R":"S")+(i<2?i+1:i-1);
 
   // Solved log badge
   const log = document.getElementById("solved-log-banner");
   if (log) {
     const badge = document.createElement("span");
     badge.className = "solved-mini";
-    badge.textContent = "✓ " + (i<3 ? "Realfag "+(i+1) : "Språk/samf. "+(i-2));
+    badge.textContent = "✓ " + (i<2 ? "Realfag "+(i+1) : (i<5 ? "Språk/samf. "+(i-1) : "VGS-kode"));
     log.appendChild(badge);
-  }
-
-  // Countdown logic
-  if (i <= 2) {
-    if (window._resetCountdown) window._resetCountdown();
-  }
-  if (i === 2) {
-    setTimeout(() => { if (window._pauseCountdown) window._pauseCountdown(); }, 1400);
-  }
-  if (i === 3) {
-    if (window._resumeCountdown) window._resumeCountdown();
-  }
-  if (i > 3) {
-    if (window._resetCountdown) window._resetCountdown();
   }
 
   // Visual fix
@@ -691,7 +677,7 @@ function go_from_hero(i) {
       const pbNext = document.getElementById("bpb"+(i+1));
       if (pbNext) pbNext.classList.add("act");
       const psNext = document.getElementById("bps"+(i+1));
-      if (psNext) psNext.textContent = (i+1<3?"R":"S")+(i+1<3?i+2:i-1)+" ◀";
+      if (psNext) psNext.textContent = (i+1<2?"R":"S")+(i+1<2?i+2:i)+" ◀";
     }, 1300);
   }
 
